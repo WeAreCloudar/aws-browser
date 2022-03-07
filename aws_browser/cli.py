@@ -28,7 +28,7 @@ def run():
     stdout: Optional[bool] = args.stdout
 
     assert (container_name is not None) != (
-        container_name_from_vault == True
+        not container_name_from_vault
     ), "You can only specify one --container-name option"
 
     if browser and browser.endswith(CONTAINER_SUFFIX):
