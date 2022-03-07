@@ -27,9 +27,15 @@ def run():
     container_name_from_vault: Optional[bool] = args.container_name_from_vault
     stdout: Optional[bool] = args.stdout
 
-    assert (container_name is not None) != (
-        not container_name_from_vault
-    ), "You can only specify one --container-name option"
+    # we can continue, in every case, except when _name and _from_vault are both set
+    # this translates to a NAND (see the truth table below)
+    #  N | V | continue
+    # ---|---|---
+    #  0 | 0 | 1
+    #  0 | 1 | 1
+    #  1 | 0 | 1
+    #  1 | 1 | 1
+    assert not (container_name and container_name_from_vault), "You can only specify one --container-name option"
 
     if browser and browser.endswith(CONTAINER_SUFFIX):
         container = True
