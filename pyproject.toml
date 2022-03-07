@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "aws-browser"
+version = "0.1.0"
+description = ""
+authors = ["Ben Bridts"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+boto3 = "^1.21.1"
+requests = "^2.27.1"
+
+[tool.poetry.dev-dependencies]
+
+[tool.poetry.scripts]
+aws-browser = 'aws_browser.cli:run'
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
