@@ -48,9 +48,9 @@ def add_browsers_from_registry():
             pass
 
         try:
-            key = rf"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\{reg_name}.exe"
-            browser_regkey = winreg.OpenKeyEx(winreg.HKEY_LOCAL_MACHINE, key)
-            browser_path = winreg.QueryValueEx(browser_regkey, "")[0]
+            key_name = rf"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\{reg_name}.exe"
+            with winreg.OpenKeyEx(winreg.HKEY_LOCAL_MACHINE, key_name) as key:
+                browser_path = winreg.QueryValueEx(key, "")[0]
             webbrowser.register(name, None, webbrowser.BackgroundBrowser(browser_path))
         except OSError:
             # does not exist
