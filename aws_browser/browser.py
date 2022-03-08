@@ -32,6 +32,13 @@ def add_browsers_from_registry():
 
     # these should all come after the default browser list
     for name in _ALL_BROWSERS:
+        if name == "google-chrome":
+            reg_name = "chrome"
+            # chrome is in the windows registry as chrome.exe so look for that one
+            # instead of defining "chrome" as an extra option in _BROWSERS_NO_CONTAINERS
+        else:
+            reg_name = name
+
         try:
             webbrowser.get(name)
             # already registered by default discovery
@@ -41,7 +48,7 @@ def add_browsers_from_registry():
             pass
 
         try:
-            key = rf"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\{name}.exe"
+            key = rf"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\{reg_name}.exe"
             browser_regkey = winreg.OpenKeyEx(winreg.HKEY_LOCAL_MACHINE, key)
             browser_path = winreg.QueryValueEx(browser_regkey, "")[0]
             webbrowser.register(name, None, webbrowser.BackgroundBrowser(browser_path))
