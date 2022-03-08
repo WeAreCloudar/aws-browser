@@ -23,24 +23,6 @@ def list_supported_browsers():
     return _ALL_BROWSERS.union((f"{x}{CONTAINER_SUFFIX}" for x in _BROWSERS_WITH_CONTAINERS))
 
 
-class StartBackgroundBrowser(webbrowser.BackgroundBrowser):
-    """
-    The same as BackgroundBrowser, but we use "start {name} ..." instead of "{name} ..."
-    """
-
-    def open(self, url, new=0, autoraise=True):
-        cmdline = ["start", self.name] + [arg.replace("%s", url) for arg in self.args]
-        sys.audit("webbrowser.open", url)
-        try:
-            if sys.platform[:3] == "win":
-                p = subprocess.Popen(cmdline)
-            else:
-                p = subprocess.Popen(cmdline, close_fds=True, start_new_session=True)
-            return p.poll() is None
-        except OSError:
-            return False
-
-
 def add_browsers_from_registry():
     if sys.platform[:3] != "win":
         return
@@ -59,13 +41,13 @@ def add_browsers_from_registry():
             pass
 
         try:
-            key = rf"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\{name}.exe"
-            winreg.OpenKeyEx(winreg.HKEY_LOCAL_MACHINE, key)
+            key_name = rf"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\{name}.exe"
+            with winreg.OpenKeyEx(winreg.HKEY_LOCAL_MACHINE, key_name) as key:
+                exe = winreg.QueryValueEx(key, "")[0]
+            webbrowser.register(name, None, webbrowser.BackgroundBrowser(exe))
         except OSError:
             # does not exist
             continue
-
-        webbrowser.register(name, None, StartBackgroundBrowser(name))
 
 
 add_browsers_from_registry()
