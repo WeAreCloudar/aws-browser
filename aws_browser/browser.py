@@ -65,7 +65,7 @@ def add_browsers_from_registry():
             # does not exist
             continue
 
-        webbrowser.register(name, StartBackgroundBrowser)
+        webbrowser.register(name, None, StartBackgroundBrowser(name))
 
 
 add_browsers_from_registry()
