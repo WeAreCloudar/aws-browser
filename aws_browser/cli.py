@@ -34,7 +34,7 @@ def run():
     #  0 | 0 | 1
     #  0 | 1 | 1
     #  1 | 0 | 1
-    #  1 | 1 | 1
+    #  1 | 1 | 0
     assert not (container_name and container_name_from_vault), "You can only specify one --container-name option"
 
     if browser and browser.endswith(CONTAINER_SUFFIX):
