@@ -4,8 +4,8 @@ Open the aws console in a browser, using CLI credentials
 ## Installation
 This package is available on pypi, you can use on of these commands to install (pipx is recommended)
 ```shell
-pipx install cfn-drift-remediation
-pip install cfn-drift-remediation
+pipx install aws-browser
+pip install aws-browser
 ```
 
 Or to install from source, you can use one of these commands:
