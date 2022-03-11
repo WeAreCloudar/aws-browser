@@ -2,7 +2,7 @@
 name = "aws-browser"
 version = "0.1.2"
 description = ""
-authors = ["Ben Bridts"]
+authors = ["Ben Bridts", "Cloudar"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
