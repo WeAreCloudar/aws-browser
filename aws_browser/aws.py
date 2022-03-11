@@ -1,5 +1,6 @@
 import dataclasses
 import json
+import uuid
 from typing import Optional
 
 import boto3
@@ -65,9 +66,8 @@ def _get_federation_token(session: boto3.Session) -> botocore.credentials.ReadOn
     # If we are starting form a User, we need to call GetFederationToken (GetSessionToken does not work here)
     # in the managed policies only the PowerUserAccess and AdministratorAccess allow this
     sts = session.client("sts")
-    arn = Arn(sts.get_caller_identity()["Arn"])
     resp = sts.get_federation_token(
-        Name=arn.resource_id,
+        Name=uuid.uuid4().hex,
         PolicyArns=[{"arn": "arn:aws:iam::aws:policy/AdministratorAccess"}],
     )["Credentials"]
     return botocore.credentials.ReadOnlyCredentials(
@@ -106,7 +106,7 @@ class Arn:
     region: Optional[str]
     account_id: Optional[str]
     resource_type: str
-    resource_id: str
+    resource_id: Optional[str]
 
     def __init__(self, arn: str):
         parts = arn.split(":")
@@ -121,12 +121,9 @@ class Arn:
             self.resource_id = parts[6]
         elif len(parts) == 6:
             # arn:partition:service:region:account-id:resource-type/resource-id
-            resource_parts = parts[5].split("/")
+            resource_parts = parts[5].split("/", 1)
             self.resource_type = resource_parts[0]
             if self.resource_type == "root":
-                self.resource_id = "root"
-            elif self.resource_type == "user":
-                # User name is last part after path
-                self.resource_id = resource_parts[-1]
+                self.resource_id = None
             else:
-                self.resource_id = "/".join(resource_parts[1:])
+                self.resource_id = resource_parts[1]
