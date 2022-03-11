@@ -1,8 +1,10 @@
 import dataclasses
 import json
+import uuid
 from typing import Optional
 
 import boto3
+import botocore
 import requests
 
 from .constants import ISSUER
@@ -16,8 +18,7 @@ def get_console_url(session: boto3.Session) -> str:
 def get_signin_token(session: boto3.Session) -> str:
     credentials = session.get_credentials().get_frozen_credentials()
     if not credentials.token:
-        # We assume we're using SSO or AssumeRole, these work out of the box
-        raise NotImplementedError("We only support credentials from SSO or STS")
+        credentials = _get_federation_token(session)
 
     parameters = {
         "Action": "getSigninToken",
@@ -61,6 +62,21 @@ def _get_session() -> boto3.Session:
     return boto3.Session()
 
 
+def _get_federation_token(session: boto3.Session) -> botocore.credentials.ReadOnlyCredentials:
+    # If we are starting form a User, we need to call GetFederationToken (GetSessionToken does not work here)
+    # in the managed policies only the PowerUserAccess and AdministratorAccess allow this
+    sts = session.client("sts")
+    resp = sts.get_federation_token(
+        Name=uuid.uuid4().hex,
+        PolicyArns=[{"arn": "arn:aws:iam::aws:policy/AdministratorAccess"}],
+    )["Credentials"]
+    return botocore.credentials.ReadOnlyCredentials(
+        resp["AccessKeyId"],
+        resp["SecretAccessKey"],
+        resp["SessionToken"],
+    )
+
+
 def _signin_endpoint(session: boto3.Session) -> str:
     region = session.region_name
     if region and region.startswith("us-gov"):
@@ -82,12 +98,15 @@ def _console_endpoint(session: boto3.Session) -> str:
 @dataclasses.dataclass
 class Arn:
     "arn:aws:sts::123456789012:assumed-role/my-role-name/my-role-session-name"
+    "arn:aws:iam::123456789012:user/user-name-with-path"
+    "arn:aws:sts::123456789012:federated-user/user-name"
+    "arn:aws:iam::123456789012:root"
     partition: str
     service: str
     region: Optional[str]
     account_id: Optional[str]
     resource_type: str
-    resource_id: str
+    resource_id: Optional[str]
 
     def __init__(self, arn: str):
         parts = arn.split(":")
@@ -104,4 +123,7 @@ class Arn:
             # arn:partition:service:region:account-id:resource-type/resource-id
             resource_parts = parts[5].split("/", 1)
             self.resource_type = resource_parts[0]
-            self.resource_id = resource_parts[1]
+            if self.resource_type == "root":
+                self.resource_id = None
+            else:
+                self.resource_id = resource_parts[1]
