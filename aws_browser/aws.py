@@ -1,8 +1,10 @@
 import dataclasses
 import json
+import uuid
 from typing import Optional
 
 import boto3
+import botocore
 import requests
 
 from .constants import ISSUER
@@ -16,8 +18,7 @@ def get_console_url(session: boto3.Session) -> str:
 def get_signin_token(session: boto3.Session) -> str:
     credentials = session.get_credentials().get_frozen_credentials()
     if not credentials.token:
-        # We assume we're using SSO or AssumeRole, these work out of the box
-        raise NotImplementedError("We only support credentials from SSO or STS")
+        credentials = _get_federation_token(session)
 
     parameters = {
         "Action": "getSigninToken",
@@ -59,6 +60,26 @@ def get_normalized_caller_identifier(session: boto3.session) -> str:
 
 def _get_session() -> boto3.Session:
     return boto3.Session()
+
+
+def _get_federation_token(session: boto3.Session) -> botocore.credentials.ReadOnlyCredentials:
+    # If we are starting form a User, we need to call GetFederationToken (GetSessionToken does not work here)
+    # in the managed policies only the PowerUserAccess and AdministratorAccess allow this
+    sts = session.client("sts")
+    arn = Arn(sts.get_caller_identity()["Arn"])
+
+    if arn.resource_type != "user":
+        raise NotImplementedError("We only support federation token from an IAM user")
+
+    resp = sts.get_federation_token(
+        Name=arn.resource_id,
+        PolicyArns=[{"arn": "arn:aws:iam::aws:policy/AdministratorAccess"}],
+    )["Credentials"]
+    return botocore.credentials.ReadOnlyCredentials(
+        resp["AccessKeyId"],
+        resp["SecretAccessKey"],
+        resp["SessionToken"],
+    )
 
 
 def _signin_endpoint(session: boto3.Session) -> str:
