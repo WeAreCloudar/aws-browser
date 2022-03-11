@@ -66,10 +66,6 @@ def _get_federation_token(session: boto3.Session) -> botocore.credentials.ReadOn
     # in the managed policies only the PowerUserAccess and AdministratorAccess allow this
     sts = session.client("sts")
     arn = Arn(sts.get_caller_identity()["Arn"])
-
-    if arn.resource_type != "user":
-        raise NotImplementedError("We only support federation token from an IAM user")
-
     resp = sts.get_federation_token(
         Name=arn.resource_id,
         PolicyArns=[{"arn": "arn:aws:iam::aws:policy/AdministratorAccess"}],
@@ -102,6 +98,9 @@ def _console_endpoint(session: boto3.Session) -> str:
 @dataclasses.dataclass
 class Arn:
     "arn:aws:sts::123456789012:assumed-role/my-role-name/my-role-session-name"
+    "arn:aws:iam::123456789012:user/user-name-with-path"
+    "arn:aws:sts::123456789012:federated-user/user-name"
+    "arn:aws:iam::123456789012:root"
     partition: str
     service: str
     region: Optional[str]
@@ -122,6 +121,12 @@ class Arn:
             self.resource_id = parts[6]
         elif len(parts) == 6:
             # arn:partition:service:region:account-id:resource-type/resource-id
-            resource_parts = parts[5].split("/", 1)
+            resource_parts = parts[5].split("/")
             self.resource_type = resource_parts[0]
-            self.resource_id = resource_parts[1]
+            if self.resource_type == "root":
+                self.resource_id = "root"
+            elif self.resource_type == "user":
+                # User name is last part after path
+                self.resource_id = resource_parts[-1]
+            else:
+                self.resource_id = "/".join(resource_parts[1:])
