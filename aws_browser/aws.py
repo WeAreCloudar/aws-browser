@@ -1,6 +1,5 @@
 import dataclasses
 import json
-import uuid
 from typing import Optional
 
 import boto3
