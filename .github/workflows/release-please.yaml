@@ -13,6 +13,11 @@ jobs:
   release-please:
     name: Release Please
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      # Required for trusted publishing to PyPI (OIDC).
+      id-token: write
     steps:
       - name: Run release-please
         id: release
@@ -48,8 +53,9 @@ jobs:
           omitDraftDuringUpdate: true
           omitPrereleaseDuringUpdate: true
 
+      # Trusted publishing: no token needed, uv uses the OIDC token from the
+      # id-token: write permission above. Configure the trusted publisher on
+      # PyPI first (see README).
       - name: Publish to PyPI
         if: ${{ steps.release.outputs.release_created }}
-        env:
-          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
         run: uv publish
