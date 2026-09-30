@@ -1,9 +1,8 @@
 from argparse import ArgumentParser
 from os import environ
-from typing import Optional
 
-from .aws import get_normalized_caller_identifier, get_console_url, _get_session
-from .browser import open_in_browser, list_supported_browsers, container_url
+from .aws import _get_session, get_console_url, get_normalized_caller_identifier
+from .browser import container_url, list_supported_browsers, open_in_browser
 from .constants import CONTAINER_SUFFIX
 
 
@@ -17,15 +16,15 @@ def run():
         help="Use the AWS_VAULT environment variable as the container name",
         action="store_true",
     )
-    parser.add_argument("--container-name", help=f"container name to use")
+    parser.add_argument("--container-name", help="container name to use")
 
     args = parser.parse_args()
 
-    browser: Optional[str] = args.browser
-    container: Optional[bool] = args.container
-    container_name: Optional[str] = args.container_name
-    container_name_from_vault: Optional[bool] = args.container_name_from_vault
-    stdout: Optional[bool] = args.stdout
+    browser: str | None = args.browser
+    container: bool | None = args.container
+    container_name: str | None = args.container_name
+    container_name_from_vault: bool | None = args.container_name_from_vault
+    stdout: bool | None = args.stdout
 
     # we can continue, in every case, except when _name and _from_vault are both set
     # this translates to a NAND (see the truth table below)

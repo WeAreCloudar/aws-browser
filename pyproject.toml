@@ -1,22 +1,35 @@
-[tool.poetry]
+[project]
 name = "aws-browser"
 version = "0.1.4"
-description = ""
-authors = ["Ben Bridts", "Cloudar"]
+description = "Open the AWS console in a browser, using CLI credentials"
+authors = [
+    { name = "Ben Bridts" },
+    { name = "Cloudar" },
+]
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+dependencies = [
+    "boto3>=1.21.1",
+    "requests>=2.27.1",
+]
 
-[tool.poetry.dependencies]
-python = "^3.9"
-boto3 = "^1.21.1"
-requests = "^2.27.1"
+[project.scripts]
+aws-browser = "aws_browser.cli:run"
 
-[tool.poetry.dev-dependencies]
-
-[tool.poetry.scripts]
-aws-browser = 'aws_browser.cli:run'
+[dependency-groups]
+dev = [
+    "ruff>=0.16.0",
+]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.12,<0.13"]
+build-backend = "uv_build"
 
-[tool.black]
+[tool.uv.build-backend]
+module-name = "aws_browser"
+module-root = ""
+
+[tool.ruff]
 line-length = 120
+target-version = "py311"

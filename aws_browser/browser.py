@@ -1,4 +1,3 @@
-import subprocess
 import sys
 import urllib.parse
 import webbrowser
@@ -20,7 +19,7 @@ def container_url(url: str, container_name: str) -> str:
 
 
 def list_supported_browsers():
-    return _ALL_BROWSERS.union((f"{x}{CONTAINER_SUFFIX}" for x in _BROWSERS_WITH_CONTAINERS))
+    return _ALL_BROWSERS.union(f"{x}{CONTAINER_SUFFIX}" for x in _BROWSERS_WITH_CONTAINERS)
 
 
 def add_browsers_from_registry():
