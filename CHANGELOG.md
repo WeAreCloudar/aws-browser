@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/WeAreCloudar/aws-browser/compare/aws-browser-0.2.0...aws-browser-0.2.1) (2026-09-30)
+
+
+### Miscellaneous Chores
+
+* release 0.2.1 ([#21](https://github.com/WeAreCloudar/aws-browser/issues/21)) ([23a1136](https://github.com/WeAreCloudar/aws-browser/commit/23a1136cfe0cdd18b70bb785a293e37ecfde4d58))
+
 ## [0.2.0](https://github.com/WeAreCloudar/aws-browser/compare/aws-browser-0.1.4...aws-browser-0.2.0) (2026-09-30)
 
 
