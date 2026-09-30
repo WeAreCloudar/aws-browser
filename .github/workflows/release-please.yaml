@@ -15,7 +15,41 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run release-please
+        id: release
         uses: googleapis/release-please-action@v4
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+
+      # The steps below only run when a release was just created (i.e. the
+      # release PR was merged). They build the project and publish it to PyPI.
+      - name: Checkout code
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        if: ${{ steps.release.outputs.release_created }}
+        uses: astral-sh/setup-uv@v10.2.0
+
+      - name: Build project for distribution
+        if: ${{ steps.release.outputs.release_created }}
+        run: uv build
+
+      - name: Upload artifacts to release
+        if: ${{ steps.release.outputs.release_created }}
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "dist/*"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.release.outputs.tag_name }}
+          allowUpdates: true
+          omitBodyDuringUpdate: true
+          omitNameDuringUpdate: true
+          omitDraftDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
+
+      - name: Publish to PyPI
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: uv publish
