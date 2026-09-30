@@ -49,3 +49,7 @@ build the changelog.
 release-please opens (and keeps updating) a release pull request that bumps the version in
 `pyproject.toml` and updates the changelog. Merging that pull request tags the commit, creates the
 GitHub release, and publishes the new version to PyPI automatically.
+
+Publishing to PyPI uses [trusted publishing](https://docs.pypi.org/trusted-publishers/) (OIDC), so
+no API token is stored in the repository. This requires a one-time setup on PyPI: add a trusted
+publisher for the project pointing at this repository with workflow `release-please.yaml`.
