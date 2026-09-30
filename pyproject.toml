@@ -1,6 +1,6 @@
 [project]
 name = "aws-browser"
-version = "0.1.4"
+version = "0.2.0"
 description = "Open the AWS console in a browser, using CLI credentials"
 authors = [
     { name = "Ben Bridts" },
