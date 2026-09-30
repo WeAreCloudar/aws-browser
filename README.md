@@ -2,44 +2,50 @@
 Open the aws console in a browser, using CLI credentials
 
 ## Installation
-This package is available on pypi, you can use on of these commands to install (pipx is recommended)
+This package is available on PyPI. Using [uv](https://docs.astral.sh/uv/) is recommended, but pipx and pip
+work as well.
+
+Run it directly without installing (uv downloads and caches it for you):
 ```shell
+uvx aws-browser
+```
+
+Install it as a persistent tool:
+```shell
+uv tool install aws-browser
 pipx install aws-browser
 pip install aws-browser
 ```
 
-Or to install from source, you can use one of these commands:
+Or to install from source:
 
 ```shell
+uv tool install git+https://github.com/WeAreCloudar/aws-browser.git
 pipx install git+https://github.com/WeAreCloudar/aws-browser.git
-pipx install git+ssh://git@github.com:WeAreCloudar/aws-browser.git
 ```
 
 ## Development
-We use poetry to manage this project
+We use [uv](https://docs.astral.sh/uv/) to manage this project.
 
 1. Clone this repository
-2. Run `poetry install`
-3. Activate the virtualenvironment with `poetry shell` (you can also use `poetry run $command`)
+2. Run `uv sync` to create the virtual environment and install all dependencies (including dev tools)
+3. Run commands inside the environment with `uv run`, e.g. `uv run aws-browser --help`
 
-### Releasing a new version to pypi
-1. Edit pyproject.toml to update the version number
-3. Commit the version number bump
-5. Tag the commit with the version number `git tag x.y.z`
-6. Push to GitHub with `git push --tags`, this will create a new release in pypi and GitHub
+uv automatically creates the virtual environment in the `.venv` folder inside the project. To use it in your
+editor (for example the "Python: Select interpreter" command in Visual Studio Code), point to `.venv`.
 
-
-### Using poetry in Visual Studio Code
-If you want to use poetry in Visual Studio Code, it works best if the virtual environment is created
-inside the project folder. Once the virtual environment is created, you can run the "Python: Select
-interpreter" command in Visual Studio Code, and point to the `.venv` folder.
-
+### Linting and formatting
+We use [Ruff](https://docs.astral.sh/ruff/) via pre-commit. Run all checks with:
 ```shell
-poetry config virtualenvs.in-project true
+uvx pre-commit run --all-files
 ```
-If you already created the virtual environment, you have to recreate it
-```shell
-# from within the project folder
-poetry env remove $(poetry env list)
-poetry install
-```
+
+### Releasing a new version to PyPI
+Releases are automated with [release-please](https://github.com/googleapis/release-please).
+Commits on `main` must follow the [Conventional Commits](https://www.conventionalcommits.org/) spec
+(e.g. `feat:`, `fix:`, `chore:`), since release-please uses them to determine the next version and to
+build the changelog.
+
+release-please opens (and keeps updating) a release pull request that bumps the version in
+`pyproject.toml` and updates the changelog. Merging that pull request tags the commit, creates the
+GitHub release, and publishes the new version to PyPI automatically.

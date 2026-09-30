@@ -1,7 +1,6 @@
 import dataclasses
 import json
 import uuid
-from typing import Optional
 
 import boto3
 import botocore
@@ -97,16 +96,16 @@ def _console_endpoint(session: boto3.Session) -> str:
 
 @dataclasses.dataclass
 class Arn:
-    "arn:aws:sts::123456789012:assumed-role/my-role-name/my-role-session-name"
-    "arn:aws:iam::123456789012:user/user-name-with-path"
-    "arn:aws:sts::123456789012:federated-user/user-name"
-    "arn:aws:iam::123456789012:root"
+    # "arn:aws:sts::123456789012:assumed-role/my-role-name/my-role-session-name"
+    # "arn:aws:iam::123456789012:user/user-name-with-path"
+    # "arn:aws:sts::123456789012:federated-user/user-name"
+    # "arn:aws:iam::123456789012:root"
     partition: str
     service: str
-    region: Optional[str]
-    account_id: Optional[str]
+    region: str | None
+    account_id: str | None
     resource_type: str
-    resource_id: Optional[str]
+    resource_id: str | None
 
     def __init__(self, arn: str):
         parts = arn.split(":")
