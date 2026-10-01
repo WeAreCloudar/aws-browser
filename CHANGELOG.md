@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.0](https://github.com/WeAreCloudar/aws-browser/compare/v0.2.1...v0.3.0) (2026-10-01)
+
+
+### Features
+
+* --version flag ([a424f47](https://github.com/WeAreCloudar/aws-browser/commit/a424f4734c53fc98066c5ac3214bd6500b3e06d4))
+
+
+### Bug Fixes
+
+* add CRT as a dependency ([#25](https://github.com/WeAreCloudar/aws-browser/issues/25)) ([90ff152](https://github.com/WeAreCloudar/aws-browser/commit/90ff152c1a4fc56e6d3b3c42122c397c017a013f))
+
 ## [0.2.1](https://github.com/WeAreCloudar/aws-browser/compare/v0.2.1...v0.2.1) (2026-10-01)
 
 
