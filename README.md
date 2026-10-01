@@ -34,6 +34,29 @@ aws-browser [options]
 
 To see all options run `aws-browser --help`.
 
+### Using `aws configure export-credentials`
+If your credentials come from a source that `aws-browser` can't read directly from its own environment
+(for example an SSO profile, or a profile that assumes a role), you can let the AWS CLI resolve them and
+export them into the environment first. `aws configure export-credentials` runs the normal AWS CLI
+credential resolution chain for the selected profile and prints the result.
+
+Export the credentials of a profile into your current shell, then open the console:
+```shell
+eval "$(aws configure export-credentials --profile myprofile --format env)"
+aws-browser
+```
+
+Do the same for a single invocation without changing your current shell:
+```shell
+env $(aws configure export-credentials --profile myprofile --format env-no-export) aws-browser
+```
+
+This also works with the other options, for example printing the sign-in link instead of opening a browser:
+```shell
+eval "$(aws configure export-credentials --profile myprofile --format env)"
+aws-browser --stdout
+```
+
 ### Selecting a browser
 Open the console in the default browser:
 ```shell
@@ -53,7 +76,7 @@ aws-browser --stdout
 ### Using Firefox container tabs
 This tool pairs very well with Firefox multi-account containers. To use that:
 
-1. Install the [Firefox Multi-Account Containers](https://addons.mozilla.org/en-US/firefox/addon/multi-account-containers/) and [Open external links in a container]https://addons.mozilla.org/en-US/firefox/addon/open-url-in-container/ extensions.
+1. Install the [Firefox Multi-Account Containers](https://addons.mozilla.org/en-US/firefox/addon/multi-account-containers/) and [Open external links in a container](https://addons.mozilla.org/en-US/firefox/addon/open-url-in-container/) extensions.
 2. Run one of the following commands.
 
 ```shell
@@ -61,7 +84,7 @@ This tool pairs very well with Firefox multi-account containers. To use that:
 aws-browser --browser firefox --container
 # Pick the container yourself
 aws-browser --browser firefox --container --container-name myProfileName
-# get the container name from the  AWS_VAULT environment variable
+# get the container name from the AWS_VAULT environment variable
 aws-browser --browser firefox --container --container-name-from-vault
 ```
 
