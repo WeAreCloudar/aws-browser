@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+from importlib.metadata import version
 from os import environ
 
 from .aws import _get_session, get_console_url, get_normalized_caller_identifier
@@ -8,6 +9,12 @@ from .constants import CONTAINER_SUFFIX
 
 def run():
     parser = ArgumentParser()
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {version('aws-browser')}",
+        help="show the program version and exit",
+    )
     parser.add_argument("--browser", help="browser to open", choices=list_supported_browsers())
     parser.add_argument("--stdout", help="print link to stdout", action="store_true")
     parser.add_argument("--container", help="Force the use of a container", action="store_true")
