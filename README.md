@@ -24,6 +24,48 @@ uv tool install git+https://github.com/WeAreCloudar/aws-browser.git
 pipx install git+https://github.com/WeAreCloudar/aws-browser.git
 ```
 
+## Usage
+Run `aws-browser` with your AWS CLI credentials available (through your environment, a profile, or a
+tool like `aws-vault`). Without any options it opens the AWS console in your default browser.
+
+```shell
+aws-browser [options]
+```
+
+To see all options run `aws-browser --help`.
+
+### Selecting a browser
+Open the console in the default browser:
+```shell
+aws-browser
+```
+
+Open the console in a specific browser:
+```shell
+aws-browser --browser firefox
+```
+
+Print the sign-in link instead of opening a browser:
+```shell
+aws-browser --stdout
+```
+
+### Using Firefox container tabs
+This tool pairs very well with Firefox multi-account containers. To use that:
+
+1. Install the [Firefox Multi-Account Containers](https://addons.mozilla.org/en-US/firefox/addon/multi-account-containers/) and [Open external links in a container]https://addons.mozilla.org/en-US/firefox/addon/open-url-in-container/ extensions.
+2. Run one of the following commands.
+
+```shell
+# Use the account/role as the container name
+aws-browser --browser firefox --container
+# Pick the container yourself
+aws-browser --browser firefox --container --container-name myProfileName
+# get the container name from the  AWS_VAULT environment variable
+aws-browser --browser firefox --container --container-name-from-vault
+```
+
+
 ## Development
 We use [uv](https://docs.astral.sh/uv/) to manage this project.
 
