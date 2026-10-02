@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/WeAreCloudar/aws-browser/compare/v0.3.0...v0.3.1) (2026-10-02)
+
+
+### Documentation
+
+* fix README errors and add aws configure export-credentials examples ([fb78223](https://github.com/WeAreCloudar/aws-browser/commit/fb782237afeb340958fd5ba4d6dfd565dd6e43a6))
+
 ## [0.3.0](https://github.com/WeAreCloudar/aws-browser/compare/v0.2.1...v0.3.0) (2026-10-01)
 
 
